@@ -65,7 +65,7 @@ export default {
 			},
 			mChart: null,
 			mChart1: null,
-			chartInterval: 0,
+			chartInterval: 0,//更新图表统计图定时任务标识
 			allSessionData: [],
 			visible: false,
 			serverConfig: {}
@@ -77,7 +77,7 @@ export default {
 		this.chartInterval = setInterval(this.updateData, 3000);
 	},
 	destroyed() {
-		clearInterval(this.chartInterval);
+		clearInterval(this.chartInterval);//释放定时任务
 	},
 	methods: {
 		updateData: function() {

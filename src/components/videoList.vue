@@ -33,15 +33,17 @@ export default {
 			videoComponentList: []
 		};
 	},
-	created() {
+	mounted() {
 		this.getVideoList();
 	},
-	mounted() {},
 	destroyed() {
 		this.$destroy('videojs');
-		this.videoComponentList.forEach(item => {
-			// var player = videojs(item);
-			item.dispose();
+		//释放视频播放器空间
+		this.videoList.forEach(item => {
+			if(typeof item.video!='undefined'){
+				item.video.dispose();
+			}
+			clearTimeout(item.delay);
 		});
 	},
 	methods: {
@@ -53,12 +55,14 @@ export default {
 					src: that.$global.baseMediaUrl + stream.app + '/' + stream.stream
 				}
 			];
-			setTimeout(function() {
-				let player = videojs('video-' + position);
+			//延迟1s执行，给dom生成一定的时间
+			stream.delay=setTimeout(function() {
+				let player = videojs('video-' + position); 
 				player.ready(function() {
 					var obj = this;
 					obj.src(story_sources);
-					that.videoComponentList.push(player);
+					stream.video=player;
+					console.log(JSON.stringify(stream));
 				});
 			}, 1000);
 			return 'video-' + position;
