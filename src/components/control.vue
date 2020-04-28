@@ -232,12 +232,18 @@ export default {
 				type: 'warning'
 			})
 				.then(() => {
-					that.deleteSession(tabledata[index].id);
-				})
-				.catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
+					let that = this;
+					this.$axios({
+						method: 'get',
+						url: this.$global.genApiUrl('/restartServer')
+					}).then(function(res) {
+						that.getAllSession();
+						if(res.data.code==0){
+							that.$message({
+								type: 'success',
+								message: '操作完成'
+							});
+						}
 					});
 				});
 		},
@@ -261,7 +267,6 @@ export default {
 			console.log(JSON.stringify(tabledata[index]));
 		},
 		deleteSession: function(id) {
-			console.log('删除链接：' + this.$global.genApiUrl('/kick_session') + '&id=' + id);
 			let that = this;
 			this.$axios({
 				method: 'get',
