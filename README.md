@@ -7,6 +7,9 @@
 	secret=your server secret
 	baseMediaUrl=your app addr 
 ```
+````
+演示地址：http://218.59.173.214:804
+````
 ![Image text](screenshot/index.png)
 ![Image text](screenshot/videoList.png)
 ## Project setup
