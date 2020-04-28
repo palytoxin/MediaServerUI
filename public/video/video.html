@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>liveplayer</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <script type="text/javascript" src="liveplayer-element.min.js"></script>
+		<script type="text/javascript">
+			window.onbeforeunload=function(e){     
+			　　console.log("page close");
+			} 
+		</script>
+    </head>
+    <body>
+       <!-- <live-player id="player01" video-url="rtmp://live.hkstv.hk.lxdns.com/live/hks" live="true" stretch="true">
+            <div style="position:absolute;left:15px;top:15px;color:#FFF;">自定义叠加层</div>
+        </live-player> -->
+        <!-- <live-player video-url="http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8" live="false" stretch="true"></live-player> -->
+		<live-player id="player01" video-url="rtmp://218.59.173.214/rtp/0BEBC202" live="true" stretch="true" show-custom-button="false">
+    </body>
+</html>

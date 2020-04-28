@@ -8,27 +8,31 @@
 		</div>
 		<div class="videoList">
 			<div class="video-item" v-for="(item, index) in videoList">
-				<video class="video-js vjs-default-skin vjs-big-play-centered" :id="genVideoId(index, item)" style="width: 15rem; height: 10rem;" controls>
-					<!-- <source src="rtmp://218.59.173.214/rtp/0BEBC202" type="rtmp/flv"> -->
-				</video>
+				<!-- <video class="video-js vjs-default-skin vjs-big-play-centered" :id="genVideoId(index, item)" style="width: 15rem; height: 10rem;" controls>
+				</video> -->
+				<img src="../assets/play.png" @click="showVideo()"/>
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
 				</div>
 			</div>
 		</div>
+		
+		<el-dialog title="视频播放" :visible.sync="showVideoDialog" :destroy-on-close="true">
+			<iframe src="/video/video.html" style="width:100%; height:35rem;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
-import 'video.js/dist/video-js.css';
-import videojs from 'video.js';
-import 'videojs-flash';
 export default {
 	name: 'app',
-	components: {},
+	components: {
+	},
 	data() {
 		return {
+			videoUrl: '',
+			showVideoDialog:false,
 			videoList: [],
 			videoComponentList: []
 		};
@@ -84,6 +88,9 @@ export default {
 			this.$alert(msg, '视频信息', {
 				confirmButtonText: '确定'
 			});
+		},
+		showVideo:function(streamInfo){
+			this.showVideoDialog=true;
 		}
 	}
 };
@@ -96,13 +103,29 @@ export default {
 	align-content: flex-start;
 }
 .video-item {
+	position: relative;
 	width: 15rem;
+	height: 10rem;
 	margin-right: 1rem;
+	background-color: #000000;
+}
+.video-item img {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	width: 3rem;
+	height: 3rem;
 }
 .video-item-title {
+	position: absolute;
+	bottom: 0;
 	color: #000000;
 	background-color: #ffffff;
 	line-height: 1.5rem;
 	padding: 0.3rem;
+	width: 14.4rem;
 }
 </style>

@@ -11,9 +11,7 @@ Vue.use(ElementUI);
 Vue.prototype.$global = global;
 Vue.prototype.$axios = axios;
 
-import Video from 'video.js'
-import 'video.js/dist/video-js.css'
-Vue.prototype.$video = Video
+
 
 new Vue({
 	router: router,
