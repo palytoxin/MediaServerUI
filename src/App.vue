@@ -10,7 +10,7 @@
 				</el-menu>
 			</el-header>
 			<el-main><router-view></router-view></el-main>
-			<el-footer style="position: absolute; bottom: 0; width: 100%;">Binsso-MediaKit v1</el-footer>
+			<!-- <el-footer style="position: absolute; bottom: 0; width: 100%;">ZLMediaKit-VUE_UI v1</el-footer> -->
 		</el-container>
 	</div>
 </template>
@@ -30,12 +30,9 @@ body,
 	background-color: #e9eef3;
 	height: 100%;
 }
-#app {
-	margin: 0 0;
-}
 .el-header,
 .el-footer {
-	background-color: #b3c0d1;
+	/* background-color: #b3c0d1; */
 	color: #333;
 	text-align: center;
 	line-height: 60px;
@@ -44,5 +41,6 @@ body,
 	background-color: #e9eef3;
 	color: #333;
 	text-align: center;
+	padding-top: 0px !important;
 }
 </style>

@@ -28,6 +28,18 @@
 
 			<el-table-column align="right">
 				<template slot="header" slot-scope="scope">
+					<el-dropdown>
+						<el-button type="primary" size="small" style="margin-right: 1rem;">
+							分类筛选
+							<i class="el-icon-arrow-down el-icon--right"></i>
+						</el-button>
+						<el-dropdown-menu slot="dropdown">
+							<el-dropdown-item>全部</el-dropdown-item>
+							<el-dropdown-item>Http</el-dropdown-item>
+							<el-dropdown-item>RTMP</el-dropdown-item>
+							<el-dropdown-item>RTP</el-dropdown-item>
+						</el-dropdown-menu>
+					</el-dropdown>
 					<el-button icon="el-icon-refresh-right" circle @click="getAllSession()"></el-button>
 				</template>
 				<template slot-scope="scope">
@@ -65,24 +77,27 @@ export default {
 			},
 			mChart: null,
 			mChart1: null,
-			chartInterval: 0,//更新图表统计图定时任务标识
+			chartInterval: 0, //更新图表统计图定时任务标识
 			allSessionData: [],
 			visible: false,
 			serverConfig: {}
 		};
 	},
-	mounted(){
+	mounted() {
 		this.getAllSession();
 		this.initTable();
 		this.chartInterval = setInterval(this.updateData, 3000);
 	},
 	destroyed() {
-		clearInterval(this.chartInterval);//释放定时任务
+		clearInterval(this.chartInterval); //释放定时任务
 	},
 	methods: {
 		updateData: function() {
 			this.getThreadsLoad();
 		},
+		/**
+		 * 获取线程状态
+		 */
 		getThreadsLoad: function() {
 			let that = this;
 			this.$axios({
@@ -151,7 +166,6 @@ export default {
 			};
 			this.myChart = echarts.init(document.getElementById('ThreadsLoad'));
 			this.myChart.setOption(this.tableOption);
-
 			this.table1Option.xAxis = {
 				type: 'category',
 				data: [], // x轴数据
@@ -181,7 +195,7 @@ export default {
 			this.myChart1 = echarts.init(document.getElementById('WorkThreadsLoad'));
 			this.myChart1.setOption(this.table1Option);
 		},
-
+		
 		getAllSession: function() {
 			let that = this;
 			that.allSessionData = [];
