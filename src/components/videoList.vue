@@ -54,12 +54,11 @@ export default {
 				}
 			];
 			setTimeout(function() {
-				let player = videojs('video-' + position); //my-player为页面video元素的id
+				let player = videojs('video-' + position);
 				player.ready(function() {
 					var obj = this;
 					obj.src(story_sources);
 					that.videoComponentList.push(player);
-					console.log('视频初始化：' + that.$global.baseMediaUrl + stream);
 				});
 			}, 1000);
 			return 'video-' + position;
