@@ -1,5 +1,12 @@
 # default
 
+### Where to change
+```
+./global.js   
+	host=your server ip
+	secret=your ZMLMediaKit server secret
+	baseMediaUrl=your app addr
+```
 ## Project setup
 ```
 npm install
