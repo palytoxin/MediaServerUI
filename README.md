@@ -5,8 +5,10 @@
 ./global.js   
 	host=your server ip
 	secret=your ZMLMediaKit server secret
-	baseMediaUrl=your app addr
+	baseMediaUrl=your app addr 
 ```
+![Image text](screenshot/index.png)
+![Image text](screenshot/videoList.png)
 ## Project setup
 ```
 npm install
