@@ -4,7 +4,7 @@
 ```
 ./global.js   
 	host=your server ip
-	secret=your ZMLMediaKit server secret
+	secret=your server secret
 	baseMediaUrl=your app addr 
 ```
 ![Image text](screenshot/index.png)
