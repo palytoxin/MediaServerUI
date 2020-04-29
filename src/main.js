@@ -7,6 +7,8 @@ import 'element-ui/lib/theme-chalk/index.css';
 import router from './router/index.js';
 import axios from 'axios';
 import echarts from 'echarts';
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
 Vue.use(ElementUI);
 Vue.prototype.$global = global;
 Vue.prototype.$axios = axios;

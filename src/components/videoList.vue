@@ -2,24 +2,45 @@
 	<div id="app">
 		<div style="background-color: #FFFFFF; margin-bottom: 1rem; position: relative; padding: 0.5rem; text-align: left;">
 			<span style="font-size: 1rem; font-weight: bold;">视频列表</span>
-			<div style="position: absolute; right: 1rem; top: 0.3rem;">
-				<el-button icon="el-icon-refresh-right" circle size="mini" @click="getVideoList()"></el-button>
-			</div>
+			<div style="position: absolute; right: 1rem; top: 0.3rem;"><el-button icon="el-icon-refresh-right" circle size="mini" @click="getVideoList()"></el-button></div>
 		</div>
 		<div class="videoList">
 			<div class="video-item" v-for="(item, index) in videoList">
 				<!-- <video class="video-js vjs-default-skin vjs-big-play-centered" :id="genVideoId(index, item)" style="width: 15rem; height: 10rem;" controls>
 				</video> -->
-				<img src="../assets/play.png" @click="showVideo(item)"/>
+				<img src="../assets/play.png" @click="showVideo(item)" />
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
 				</div>
 			</div>
 		</div>
-		
+
 		<el-dialog title="视频播放" :visible.sync="showVideoDialog" :destroy-on-close="true">
-			<iframe :src="getPlayerPath" style="width:100%; height:35rem;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
+			<iframe
+				:src="getPlayerPath"
+				style="width:100%; height:35rem;"
+				frameborder="no"
+				border="0"
+				marginwidth="0"
+				marginheight="0"
+				scrolling="no"
+				allowtransparency="yes"
+			></iframe>
+			<div id="shared">
+				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
+					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">播放地址：</span>
+					<el-input v-model="getPlayerShared.sharedUrl" :disabled="true" v-on:click.native="copySharedInfo(getPlayerShared.sharedUrl)"></el-input>
+				</div>
+				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
+					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">iframe：</span>
+					<el-input v-model="getPlayerShared.sharedIframe" :disabled="true" v-on:click.native="copySharedInfo(getPlayerShared.sharedIframe)"></el-input>
+				</div>
+				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
+					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">rtmp：</span>
+					<el-input v-model="getPlayerShared.sharedRtmp" :disabled="true" v-on:click.native="copySharedInfo(getPlayerShared.sharedRtmp)"></el-input>
+				</div>
+			</div>
 		</el-dialog>
 	</div>
 </template>
@@ -27,19 +48,27 @@
 <script>
 export default {
 	name: 'app',
-	components: {
-	},
+	components: {},
 	data() {
 		return {
 			videoUrl: '',
-			showVideoDialog:false,
+			showVideoDialog: false,
 			videoList: [],
-			videoComponentList: []
+			videoComponentList: [],
+			currentPlayerInfo: {} //当前播放对象
 		};
 	},
-	computed:{
-		getPlayerPath:function(){
-			return '/video/video.html?url='+this.videoUrl;
+	computed: {
+		getPlayerPath: function() {
+			return '/video/video.html?url=' + this.videoUrl;
+		},
+		getPlayerShared: function() {
+			let info = {
+				sharedUrl: window.location.host + '/video/video.html?url=' + this.videoUrl,
+				sharedIframe: '<iframe src="'+window.location.host + '/video/video.html?url=' + this.videoUrl+'"></iframe>',
+				sharedRtmp: this.videoUrl
+			};
+			return info;
 		}
 	},
 	mounted() {
@@ -49,7 +78,7 @@ export default {
 		this.$destroy('videojs');
 		//释放视频播放器空间
 		this.videoList.forEach(item => {
-			if(typeof item.video!='undefined'){
+			if (typeof item.video != 'undefined') {
 				item.video.dispose();
 			}
 			clearTimeout(item.delay);
@@ -66,7 +95,7 @@ export default {
 		// 	];
 		// 	//延迟1s执行，给dom生成一定的时间
 		// 	stream.delay=setTimeout(function() {
-		// 		let player = videojs('video-' + position); 
+		// 		let player = videojs('video-' + position);
 		// 		player.ready(function() {
 		// 			var obj = this;
 		// 			obj.src(story_sources);
@@ -89,14 +118,35 @@ export default {
 			});
 		},
 		showVideoInfo: function(videoData) {
-			let msg = '所属应用：' + videoData.app  + ' 数据流类型：' + videoData.schema + ' 流名称：' + videoData.stream +' 观看人数：'+videoData.readerCount;
+			let msg = '所属应用：' + videoData.app + ' 数据流类型：' + videoData.schema + ' 流名称：' + videoData.stream + ' 观看人数：' + videoData.readerCount;
 			this.$alert(msg, '视频信息', {
 				confirmButtonText: '确定'
 			});
 		},
-		showVideo:function(streamInfo){
-			this.showVideoDialog=true;
-			this.videoUrl=this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream;
+		showVideo: function(streamInfo) {
+			this.showVideoDialog = true;
+			this.videoUrl = this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream;
+			this.currentPlayerInfo = streamInfo;
+		},
+		copySharedInfo: function(data) {
+			console.log('复制内容：' + data);
+			let _this = this;
+			this.$copyText(data).then(
+				function(e) {
+					_this.$message({
+						showClose: true,
+						message: '复制成功',
+						type: 'success'
+					});
+				},
+				function(e) {
+					_this.$message({
+						showClose: true,
+						message: '复制失败，请手动复制',
+						type: 'error'
+					});
+				}
+			);
 		}
 	}
 };
