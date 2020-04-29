@@ -12,6 +12,7 @@
 ````
 ![Image text](screenshot/index.png)
 ![Image text](screenshot/videoList.png)
+![Image text](screenshot/videoPlayer.png)
 ## Project setup
 ```
 npm install
