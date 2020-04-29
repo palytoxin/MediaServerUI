@@ -55,7 +55,8 @@ export default {
 			showVideoDialog: false,
 			videoList: [],
 			videoComponentList: [],
-			currentPlayerInfo: {} //当前播放对象
+			currentPlayerInfo: {}, //当前播放对象
+			updateLooper:0,//数据刷新轮训标志
 		};
 	},
 	computed: {
@@ -72,39 +73,17 @@ export default {
 		}
 	},
 	mounted() {
-		this.getVideoList();
+		this.initData();
+		this.updateLooper=setInterval(this.initData,3000);
 	},
 	destroyed() {
 		this.$destroy('videojs');
-		//释放视频播放器空间
-		this.videoList.forEach(item => {
-			if (typeof item.video != 'undefined') {
-				item.video.dispose();
-			}
-			clearTimeout(item.delay);
-		});
+		clearTimeout(this.updateLooper);
 	},
 	methods: {
-		// genVideoId: function(position, stream) {
-		// 	let that = this;
-		// 	var story_sources = [
-		// 		{
-		// 			type: 'rtmp/flv',
-		// 			src: that.$global.baseMediaUrl + stream.app + '/' + stream.stream
-		// 		}
-		// 	];
-		// 	//延迟1s执行，给dom生成一定的时间
-		// 	stream.delay=setTimeout(function() {
-		// 		let player = videojs('video-' + position);
-		// 		player.ready(function() {
-		// 			var obj = this;
-		// 			obj.src(story_sources);
-		// 			stream.video=player;
-		// 			console.log(JSON.stringify(stream));
-		// 		});
-		// 	}, 1000);
-		// 	return 'video-' + position;
-		// },
+		initData:function(){
+			this.getVideoList();
+		},
 		getVideoList: function() {
 			let that = this;
 			this.$axios({

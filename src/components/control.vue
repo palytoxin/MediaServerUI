@@ -28,18 +28,6 @@
 
 			<el-table-column align="right">
 				<template slot="header" slot-scope="scope">
-					<el-dropdown>
-						<el-button type="primary" size="small" style="margin-right: 1rem;">
-							分类筛选
-							<i class="el-icon-arrow-down el-icon--right"></i>
-						</el-button>
-						<el-dropdown-menu slot="dropdown">
-							<el-dropdown-item>全部</el-dropdown-item>
-							<el-dropdown-item>Http</el-dropdown-item>
-							<el-dropdown-item>RTMP</el-dropdown-item>
-							<el-dropdown-item>RTP</el-dropdown-item>
-						</el-dropdown-menu>
-					</el-dropdown>
 					<el-button icon="el-icon-refresh-right" circle @click="getAllSession()"></el-button>
 				</template>
 				<template slot-scope="scope">
@@ -65,6 +53,7 @@ export default {
 				yAxis: {},
 				label: {},
 				tooltip: {},
+				dataZoom: [],
 				series: []
 			},
 			table1Option: {
@@ -77,6 +66,8 @@ export default {
 			},
 			mChart: null,
 			mChart1: null,
+			charZoomStart: 0,
+			charZoomEnd: 100,
 			chartInterval: 0, //更新图表统计图定时任务标识
 			allSessionData: [],
 			visible: false,
@@ -86,6 +77,7 @@ export default {
 	mounted() {
 		this.getAllSession();
 		this.initTable();
+		this.updateData();
 		this.chartInterval = setInterval(this.updateData, 3000);
 	},
 	destroyed() {
@@ -107,10 +99,7 @@ export default {
 				if (res.data.code == 0) {
 					that.tableOption.xAxis.data.push(new Date().toLocaleTimeString());
 					that.table1Option.xAxis.data.push(new Date().toLocaleTimeString());
-					if (that.tableOption.series.length > 100) {
-						that.tableOption.series = [];
-						that.tableOp1tion.series = [];
-					}
+
 					for (var i = 0; i < res.data.data.length; i++) {
 						if (that.tableOption.series[i] === undefined) {
 							let data = {
@@ -130,14 +119,19 @@ export default {
 							that.table1Option.series[i].data.push(res.data.data[i].load);
 						}
 					}
-					that.myChart = echarts.init(document.getElementById('ThreadsLoad'));
-					that.myChart.setOption(that.tableOption);
-					that.myChart1 = echarts.init(document.getElementById('WorkThreadsLoad'));
-					that.myChart1.setOption(that.table1Option);
+					that.tableOption.dataZoom[0].start = that.charZoomStart;
+					that.tableOption.dataZoom[0].end = that.charZoomEnd;
+					that.table1Option.dataZoom[0].start = that.charZoomStart;
+					that.table1Option.dataZoom[0].end = that.charZoomEnd;
+					//that.myChart = echarts.init(document.getElementById('ThreadsLoad'));
+					that.myChart.setOption(that.tableOption, true);
+					// that.myChart1 = echarts.init(document.getElementById('WorkThreadsLoad'));
+					that.myChart1.setOption(that.table1Option, true);
 				}
 			});
 		},
 		initTable: function() {
+			let that = this;
 			this.tableOption.xAxis = {
 				type: 'category',
 				data: [], // x轴数据
@@ -164,8 +158,25 @@ export default {
 					fontSize: 15
 				}
 			};
+			this.tableOption.dataZoom = [
+				{
+					show: true,
+					start: this.charZoomStart,
+					end: this.charZoomEnd
+				}
+			];
 			this.myChart = echarts.init(document.getElementById('ThreadsLoad'));
 			this.myChart.setOption(this.tableOption);
+			this.myChart.on('dataZoom', function(event) {
+				if (event.batch) {
+					that.charZoomStart = event.batch[0].start;
+					that.charZoomEnd = event.batch[0].end;
+				} else {
+					that.charZoomStart = event.start;
+					that.charZoomEnd = event.end;
+				}
+			});
+
 			this.table1Option.xAxis = {
 				type: 'category',
 				data: [], // x轴数据
@@ -192,10 +203,26 @@ export default {
 					fontSize: 15
 				}
 			};
+			this.table1Option.dataZoom = [
+				{
+					show: true,
+					start: this.charZoomStart,
+					end: this.charZoomEnd
+				}
+			];
 			this.myChart1 = echarts.init(document.getElementById('WorkThreadsLoad'));
 			this.myChart1.setOption(this.table1Option);
+			this.myChart1.on('dataZoom', function(event) {
+				if (event.batch) {
+					that.charZoomStart = event.batch[0].start;
+					that.charZoomEnd = event.batch[0].end;
+				} else {
+					that.charZoomStart = event.start;
+					that.charZoomEnd = event.end;
+				}
+			});
 		},
-		
+
 		getAllSession: function() {
 			let that = this;
 			that.allSessionData = [];
@@ -230,22 +257,21 @@ export default {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
-			})
-				.then(() => {
-					let that = this;
-					this.$axios({
-						method: 'get',
-						url: this.$global.genApiUrl('/restartServer')
-					}).then(function(res) {
-						that.getAllSession();
-						if(res.data.code==0){
-							that.$message({
-								type: 'success',
-								message: '操作完成'
-							});
-						}
-					});
+			}).then(() => {
+				let that = this;
+				this.$axios({
+					method: 'get',
+					url: this.$global.genApiUrl('/restartServer')
+				}).then(function(res) {
+					that.getAllSession();
+					if (res.data.code == 0) {
+						that.$message({
+							type: 'success',
+							message: '操作完成'
+						});
+					}
 				});
+			});
 		},
 		deleteRow: function(index, tabledata) {
 			let that = this;
