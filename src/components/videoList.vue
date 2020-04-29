@@ -10,7 +10,7 @@
 			<div class="video-item" v-for="(item, index) in videoList">
 				<!-- <video class="video-js vjs-default-skin vjs-big-play-centered" :id="genVideoId(index, item)" style="width: 15rem; height: 10rem;" controls>
 				</video> -->
-				<img src="../assets/play.png" @click="showVideo()"/>
+				<img src="../assets/play.png" @click="showVideo(item)"/>
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
@@ -19,7 +19,7 @@
 		</div>
 		
 		<el-dialog title="视频播放" :visible.sync="showVideoDialog" :destroy-on-close="true">
-			<iframe src="/video/video.html" style="width:100%; height:35rem;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
+			<iframe :src="getPlayerPath" style="width:100%; height:35rem;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes"></iframe>
 		</el-dialog>
 	</div>
 </template>
@@ -37,6 +37,11 @@ export default {
 			videoComponentList: []
 		};
 	},
+	computed:{
+		getPlayerPath:function(){
+			return '/video/video.html?url='+this.videoUrl;
+		}
+	},
 	mounted() {
 		this.getVideoList();
 	},
@@ -51,26 +56,26 @@ export default {
 		});
 	},
 	methods: {
-		genVideoId: function(position, stream) {
-			let that = this;
-			var story_sources = [
-				{
-					type: 'rtmp/flv',
-					src: that.$global.baseMediaUrl + stream.app + '/' + stream.stream
-				}
-			];
-			//延迟1s执行，给dom生成一定的时间
-			stream.delay=setTimeout(function() {
-				let player = videojs('video-' + position); 
-				player.ready(function() {
-					var obj = this;
-					obj.src(story_sources);
-					stream.video=player;
-					console.log(JSON.stringify(stream));
-				});
-			}, 1000);
-			return 'video-' + position;
-		},
+		// genVideoId: function(position, stream) {
+		// 	let that = this;
+		// 	var story_sources = [
+		// 		{
+		// 			type: 'rtmp/flv',
+		// 			src: that.$global.baseMediaUrl + stream.app + '/' + stream.stream
+		// 		}
+		// 	];
+		// 	//延迟1s执行，给dom生成一定的时间
+		// 	stream.delay=setTimeout(function() {
+		// 		let player = videojs('video-' + position); 
+		// 		player.ready(function() {
+		// 			var obj = this;
+		// 			obj.src(story_sources);
+		// 			stream.video=player;
+		// 			console.log(JSON.stringify(stream));
+		// 		});
+		// 	}, 1000);
+		// 	return 'video-' + position;
+		// },
 		getVideoList: function() {
 			let that = this;
 			this.$axios({
@@ -91,6 +96,7 @@ export default {
 		},
 		showVideo:function(streamInfo){
 			this.showVideoDialog=true;
+			this.videoUrl=this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream;
 		}
 	}
 };
