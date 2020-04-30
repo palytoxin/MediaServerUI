@@ -25,7 +25,6 @@
 			<el-table-column prop="peer_ip" label="远端"></el-table-column>
 			<el-table-column prop="local_ip" label="本地"></el-table-column>
 			<el-table-column prop="typeid" label="类型"></el-table-column>
-
 			<el-table-column align="right">
 				<template slot="header" slot-scope="scope">
 					<el-button icon="el-icon-refresh-right" circle @click="getAllSession()"></el-button>

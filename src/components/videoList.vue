@@ -27,7 +27,10 @@
 				scrolling="no"
 				allowtransparency="yes"
 			></iframe>
-			<div id="shared">
+			<div id="shared" style="text-align: right;">
+				<div style="margin-bottom: 0.5rem;">
+					<el-button type="primary" size="small" @click="startRecord()">录制</el-button>
+				</div>
 				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
 					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">播放地址：</span>
 					<el-input v-model="getPlayerShared.sharedUrl" :disabled="true" v-on:click.native="copySharedInfo(getPlayerShared.sharedUrl)"></el-input>
@@ -90,7 +93,6 @@ export default {
 				method: 'get',
 				url: this.$global.genApiUrl('/getMediaList') + '&schema=rtmp'
 			}).then(function(res) {
-				console.log(JSON.stringify(res.data));
 				if (res.data.code == 0) {
 					that.videoList = res.data.data;
 				}
@@ -104,7 +106,7 @@ export default {
 		},
 		showVideo: function(streamInfo) {
 			this.showVideoDialog = true;
-			this.videoUrl = this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream;
+			this.videoUrl = this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream+".flv";
 			this.currentPlayerInfo = streamInfo;
 		},
 		copySharedInfo: function(data) {
@@ -126,6 +128,29 @@ export default {
 					});
 				}
 			);
+		},
+		startRecord:function(){
+			let that = this;
+			let streamInfo=this.currentPlayerInfo;
+			this.$axios({
+				method: 'get',
+				url: this.$global.genApiUrl('/startRecord') + '&type=0&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+"&wait_for_record=1&continue_record=1&customized_path='/home/kkkkk/Documents/ZLMediaKit/release/linux/Debug'"
+			}).then(function(res) {
+				console.log(JSON.stringify(res.data));
+				if (res.data.code == 0&&res.data.result) {
+					that.$message({
+						showClose: true,
+						message: '开始录制',
+						type: 'success'
+					});
+				}else{
+					that.$message({
+						showClose: true,
+						message: res.data.msg,
+						type: 'error'
+					});
+				}
+			});
 		}
 	}
 };
