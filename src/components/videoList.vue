@@ -29,7 +29,7 @@
 			></iframe>
 			<div id="shared" style="text-align: right;">
 				<div style="margin-bottom: 0.5rem;">
-					<el-button type="primary" size="small" @click="startRecord()">录制</el-button>
+					<!-- <el-button type="primary" size="small" @click="startRecord()">录制</el-button> -->
 				</div>
 				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
 					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">播放地址：</span>
