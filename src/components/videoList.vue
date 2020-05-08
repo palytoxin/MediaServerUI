@@ -29,7 +29,8 @@
 			></iframe>
 			<div id="shared" style="text-align: right;">
 				<div style="margin-bottom: 0.5rem;">
-					<!-- <el-button type="primary" size="small" @click="startRecord()">录制</el-button> -->
+					<el-button type="primary" size="small" @click="startRecord()">录制</el-button>
+					<el-button type="primary" size="small" @click="stopRecord()">停止录制</el-button>
 				</div>
 				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
 					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">播放地址：</span>
@@ -77,7 +78,7 @@ export default {
 	},
 	mounted() {
 		this.initData();
-		this.updateLooper=setInterval(this.initData,3000);
+		this.updateLooper=setInterval(this.initData,10000);
 	},
 	destroyed() {
 		this.$destroy('videojs');
@@ -132,15 +133,42 @@ export default {
 		startRecord:function(){
 			let that = this;
 			let streamInfo=this.currentPlayerInfo;
+			let startURL=this.$global.genApiUrl('/startRecord') + '&type=0&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+"&wait_for_record=1&continue_record=1";
+			console.log(startURL);
 			this.$axios({
 				method: 'get',
-				url: this.$global.genApiUrl('/startRecord') + '&type=0&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+"&wait_for_record=1&continue_record=1&customized_path='/home/kkkkk/Documents/ZLMediaKit/release/linux/Debug'"
+				url: startURL
 			}).then(function(res) {
 				console.log(JSON.stringify(res.data));
 				if (res.data.code == 0&&res.data.result) {
 					that.$message({
 						showClose: true,
 						message: '开始录制',
+						type: 'success'
+					});
+				}else{
+					that.$message({
+						showClose: true,
+						message: res.data.msg,
+						type: 'error'
+					});
+				}
+			});
+		},
+		stopRecord:function(){
+			let that = this;
+			let streamInfo=this.currentPlayerInfo;
+			let stopURL=this.$global.genApiUrl('/stopRecord') + '&type=0&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream;
+			console.log(stopURL);
+			this.$axios({
+				method: 'get',
+				url: stopURL
+			}).then(function(res) {
+				console.log(JSON.stringify(res.data));
+				if (res.data.code == 0&&res.data.result) {
+					that.$message({
+						showClose: true,
+						message: '结束录制',
 						type: 'success'
 					});
 				}else{
