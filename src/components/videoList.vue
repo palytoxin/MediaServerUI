@@ -12,6 +12,7 @@
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
+					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoHistory(item)"></el-button>
 				</div>
 			</div>
 		</div>
@@ -105,6 +106,11 @@ export default {
 			this.$alert(msg, '视频信息', {
 				confirmButtonText: '确定'
 			});
+		},
+		showVideoHistory:function(streamInfo){
+			let msg = '所属应用：' + streamInfo.app + ' 数据流类型：' + streamInfo.schema + ' 流名称：' + streamInfo.stream + ' 观看人数：' + streamInfo.readerCount;
+			this.currentPlayerInfo = streamInfo;
+			
 		},
 		showVideo: function(streamInfo) {
 			this.showVideoDialog = true;
