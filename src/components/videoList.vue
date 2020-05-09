@@ -154,7 +154,7 @@ export default {
 		},
 		getSnap: function(streamInfo) {
 			let videoUrl = this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream+".flv";
-			return this.$global.genApiUrl('/getSnap') + '&timeout_sec=10&expire_sec=30&url='+videoUrl;
+			return this.$global.genApiUrl('/getSnap') + '&timeout_sec=10&expire_sec=30&url='+videoUrl+"&st="+new Date().getTime();
 		},
 	}
 };
