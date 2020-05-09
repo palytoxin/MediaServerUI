@@ -134,7 +134,7 @@ export default {
 		startRecord:function(){
 			let that = this;
 			let streamInfo=this.currentPlayerInfo;
-			let startURL=this.$global.genApiUrl('/startRecord') + '&type=1&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+"&wait_for_record=1&continue_record=1";
+			let startURL=this.$global.genApiUrl('/startRecord') + '&type=1&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream;
 			console.log(startURL);
 			this.$axios({
 				method: 'get',
@@ -184,7 +184,22 @@ export default {
 		recordList:function(){
 			let that = this;
 			let streamInfo=this.currentPlayerInfo;
-			let stopURL=this.$global.genApiUrl('/getMp4RecordFile') + '&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+'&period=2020-05-08';
+
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var day = date.getDate();
+			if (month < 10) {
+				month = "0" + month;
+			}
+			if (day < 10) {
+				day = "0" + day;
+			}
+			let nowDate = year + "-" + month + "-" + day;
+
+			let stopURL=this.$global.genApiUrl('/getMp4RecordFile') + '&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+'&period='+nowDate;
+
+
 			console.log(stopURL);
 			this.$axios({
 				method: 'get',
@@ -192,6 +207,14 @@ export default {
 			}).then(function(res) {
 				console.log(JSON.stringify(res.data));
 				if (res.data.code == 0&&res.data) {
+					let mp4files = res.data.data.paths;
+					let rootPath  = res.data.data.rootPath;
+					let weburltemp = rootPath.substr(rootPath.indexOf("record"));
+					let weburl = "http://" + that.$global.serverip + "/" + weburltemp;
+					for(let i in mp4files) {
+						let fullMp4file = weburl + mp4files[i]
+						console.log(fullMp4file);
+					};
 					that.$message({
 						showClose: true,
 						message: '列表获取成功',
