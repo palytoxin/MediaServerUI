@@ -8,7 +8,7 @@
 			<div class="video-item" v-for="(item, index) in videoList">
 				<!-- <video class="video-js vjs-default-skin vjs-big-play-centered" :id="genVideoId(index, item)" style="width: 15rem; height: 10rem;" controls>
 				</video> -->
-				<img :src="getSnap(item)" @click="showVideo(item)" />
+				<img class="video-item-img" :src="getSnap(item)" @click="showVideo(item)"  />
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
@@ -173,7 +173,7 @@ export default {
 	margin-right: 1rem;
 	background-color: #000000;
 }
-.video-item img {
+.video-item-img {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -182,6 +182,22 @@ export default {
 	margin: auto;
 	width: 100%;
 	height: 100%;
+}
+.video-item-img:after {
+	content: "";
+	    display: inline-block;
+	    position: absolute;
+	    z-index: 2;
+	    top: 0;
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+	    margin: auto;
+	    width: 3rem;
+	    height: 3rem;
+	    background-image: url("../assets/loading.png");
+	    background-size: cover;
+		background-color:#000000;
 }
 .video-item-title {
 	position: absolute;
