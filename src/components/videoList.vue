@@ -8,7 +8,7 @@
 			<div class="video-item" v-for="(item, index) in videoList">
 				<!-- <video class="video-js vjs-default-skin vjs-big-play-centered" :id="genVideoId(index, item)" style="width: 15rem; height: 10rem;" controls>
 				</video> -->
-				<img src="../assets/play.png" @click="showVideo(item)" />
+				<img :src="getSnap(item)" @click="showVideo(item)" />
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
@@ -40,7 +40,7 @@
 					<el-input v-model="getPlayerShared.sharedIframe" :disabled="true" v-on:click.native="copySharedInfo(getPlayerShared.sharedIframe)"></el-input>
 				</div>
 				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
-					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">rtmp：</span>
+					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">资源地址：</span>
 					<el-input v-model="getPlayerShared.sharedRtmp" :disabled="true" v-on:click.native="copySharedInfo(getPlayerShared.sharedRtmp)"></el-input>
 				</div>
 			</div>
@@ -73,7 +73,7 @@ export default {
 				sharedRtmp: this.videoUrl
 			};
 			return info;
-		}
+		},
 	},
 	mounted() {
 		this.initData();
@@ -151,7 +151,11 @@ export default {
 					});
 				}
 			});
-		}
+		},
+		getSnap: function(streamInfo) {
+			let videoUrl = this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream+".flv";
+			return this.$global.genApiUrl('/getSnap') + '&timeout_sec=10&expire_sec=30&url='+videoUrl;
+		},
 	}
 };
 </script>
@@ -176,8 +180,8 @@ export default {
 	left: 0;
 	right: 0;
 	margin: auto;
-	width: 3rem;
-	height: 3rem;
+	width: 100%;
+	height: 100%;
 }
 .video-item-title {
 	position: absolute;
