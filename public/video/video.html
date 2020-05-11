@@ -11,6 +11,18 @@
 
 			}
 
+			window.addEventListener("message", function(event) {
+				var data = event.data;
+				switch (data.cmd) {
+					case 'switchUrl':
+						// 处理业务逻辑
+						console.log("收到消息："+JSON.stringify(data.params));
+						var player = document.getElementById('player01');
+						player.setAttribute("video-url",data.params["path"]);
+						break;
+				}
+			});
+
 			function getQueryVariable(variable) {
 				var query = window.location.search.substring(1);
 				var vars = query.split("&");
@@ -25,11 +37,11 @@
 		</script>
 	</head>
 	<body>
-		<live-player id="player01" live="true" stretch="true" show-custom-button="false">
+		<live-player id="player01" live="true" stretch="true" show-custom-button="false" autoplay>
 		</live-player>
 		<script>
-			var videoPath=getQueryVariable("url");
-			console.log('播放地址：'+videoPath);
+			var videoPath = getQueryVariable("url");
+			console.log('播放地址：' + videoPath);
 			var player = document.getElementById('player01');
 			player.setAttribute("video-url", videoPath);
 		</script>

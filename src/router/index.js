@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 
 import control from '../components/control.vue'
 import videoList from '../components/videoList.vue'
-import videoReplay from '../components/videoReplay.vue'
 import HelloWorld from '../components/HelloWorld.vue'
 Vue.use(VueRouter)
 
@@ -16,14 +15,6 @@ export default new VueRouter({
 		{
 			path: '/videoList',
 			component: videoList,
-		},
-		{
-			path: '/videoReplay',
-			component: videoReplay,
-		},
-		{
-			path: '/zx',
-			component: HelloWorld,
 		},
 	]
 })

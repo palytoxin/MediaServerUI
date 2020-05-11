@@ -5,7 +5,7 @@
 				<el-menu router :default-active="this.$route.path" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" mode="horizontal">
 					<el-menu-item index="/">控制台</el-menu-item>
 					<el-menu-item index="/videoList">视频广场</el-menu-item>
-					<el-menu-item index="/videoReplay">录像回看</el-menu-item>
+					<!-- <el-menu-item index="/videoReplay">录像回看</el-menu-item> -->
 					<el-menu-item index="4">通道配置</el-menu-item>
 				</el-menu>
 			</el-header>
