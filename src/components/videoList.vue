@@ -12,6 +12,7 @@
 				<div class="video-item-title">
 					{{ item.stream }}
 					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoInfo(item)"></el-button>
+					<el-button icon="el-icon-search" circle size="mini" style="float: right;" @click="showVideoHistory(item)"></el-button>
 				</div>
 			</div>
 		</div>
@@ -29,7 +30,9 @@
 			></iframe>
 			<div id="shared" style="text-align: right;">
 				<div style="margin-bottom: 0.5rem;">
-					<!-- <el-button type="primary" size="small" @click="startRecord()">录制</el-button> -->
+					<el-button type="primary" size="small" @click="startRecord()">录制</el-button>
+					<el-button type="primary" size="small" @click="stopRecord()">停止录制</el-button>
+					<el-button type="primary" size="small" @click="recordList()">录制列表</el-button>
 				</div>
 				<div style="display: flex; margin-bottom: 0.5rem; height: 2.5rem;">
 					<span style="width: 5rem; line-height: 2.5rem; text-align: right;">播放地址：</span>
@@ -77,7 +80,7 @@ export default {
 	},
 	mounted() {
 		this.initData();
-		this.updateLooper=setInterval(this.initData,3000);
+		this.updateLooper=setInterval(this.initData,10000);
 	},
 	destroyed() {
 		this.$destroy('videojs');
@@ -103,6 +106,11 @@ export default {
 			this.$alert(msg, '视频信息', {
 				confirmButtonText: '确定'
 			});
+		},
+		showVideoHistory:function(streamInfo){
+			let msg = '所属应用：' + streamInfo.app + ' 数据流类型：' + streamInfo.schema + ' 流名称：' + streamInfo.stream + ' 观看人数：' + streamInfo.readerCount;
+			this.currentPlayerInfo = streamInfo;
+			
 		},
 		showVideo: function(streamInfo) {
 			this.showVideoDialog = true;
@@ -132,9 +140,11 @@ export default {
 		startRecord:function(){
 			let that = this;
 			let streamInfo=this.currentPlayerInfo;
+			let startURL=this.$global.genApiUrl('/startRecord') + '&type=1&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream;
+			console.log(startURL);
 			this.$axios({
 				method: 'get',
-				url: this.$global.genApiUrl('/startRecord') + '&type=0&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+"&wait_for_record=1&continue_record=1&customized_path='/home/kkkkk/Documents/ZLMediaKit/release/linux/Debug'"
+				url: startURL
 			}).then(function(res) {
 				console.log(JSON.stringify(res.data));
 				if (res.data.code == 0&&res.data.result) {
@@ -152,9 +162,91 @@ export default {
 				}
 			});
 		},
+		stopRecord:function(){
+			let that = this;
+			let streamInfo=this.currentPlayerInfo;
+			let stopURL=this.$global.genApiUrl('/stopRecord') + '&type=1&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream;
+			console.log(stopURL);
+			this.$axios({
+				method: 'get',
+				url: stopURL
+			}).then(function(res) {
+				console.log(JSON.stringify(res.data));
+				if (res.data.code == 0&&res.data.result) {
+					that.$message({
+						showClose: true,
+						message: '结束录制',
+						type: 'success'
+					});
+				}else{
+					that.$message({
+						showClose: true,
+						message: res.data.msg,
+						type: 'error'
+					});
+				}
+			});
+		},
+		recordList:function(){
+			let that = this;
+			let streamInfo=this.currentPlayerInfo;
+
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var day = date.getDate();
+			if (month < 10) {
+				month = "0" + month;
+			}
+			if (day < 10) {
+				day = "0" + day;
+			}
+			let nowDate = year + "-" + month + "-" + day;
+
+			let stopURL=this.$global.genApiUrl('/getMp4RecordFile') + '&vhost='+streamInfo.vhost+"&app="+streamInfo.app+"&stream="+streamInfo.stream+'&period='+nowDate;
+
+
+			console.log(stopURL);
+			this.$axios({
+				method: 'get',
+				url: stopURL
+			}).then(function(res) {
+				console.log(JSON.stringify(res.data));
+				if (res.data.code == 0&&res.data) {
+					let mp4files = res.data.data.paths;
+					let rootPath  = res.data.data.rootPath;
+					let weburltemp = rootPath.substr(rootPath.indexOf("record"));
+					let weburl = "http://" + that.$global.serverip + "/" + weburltemp;
+					for(let i in mp4files) {
+						let fullMp4file = weburl + mp4files[i]
+						console.log(fullMp4file);
+					};
+					that.$message({
+						showClose: true,
+						message: '列表获取成功',
+						type: 'success'
+					});
+				}else{
+					that.$message({
+						showClose: true,
+						message: res.data.msg,
+						type: 'error'
+					});
+				}
+			});
+		},
 		getSnap: function(streamInfo) {
+			
 			let videoUrl = this.$global.baseMediaUrl + streamInfo.app + '/' + streamInfo.stream+".flv";
-			return this.$global.genApiUrl('/getSnap') + '&timeout_sec=10&expire_sec=30&url='+videoUrl+"&st="+new Date().getTime();
+			console.log("videoUrl:\t" + videoUrl);
+
+			let snapUrl = videoUrl.replace(/^ws/,"http");
+			console.log( 'snapUrl:\t' + snapUrl);
+
+			let fullSnapRequest = this.$global.genApiUrl('/getSnap') + '&timeout_sec=10&expire_sec=30&url='+snapUrl+"&st="+new Date().getTime();
+			console.log( 'fullSnapRequest:\t' + fullSnapRequest);
+
+			return fullSnapRequest;
 		},
 	}
 };
