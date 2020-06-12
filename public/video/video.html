@@ -19,6 +19,14 @@
 						console.log("收到消息："+JSON.stringify(data.params));
 						var player = document.getElementById('player01');
 						player.setAttribute("video-url",data.params["path"]);
+						if(data.params['live'])
+						{
+							player.setAttribute('live',true);
+						}
+						else
+						{
+							player.setAttribute('live',false);
+						}
 						break;
 				}
 			});
@@ -40,7 +48,7 @@
 		<live-player id="player01" live="true" stretch="true" show-custom-button="false" autoplay>
 		</live-player>
 		<script>
-			var videoPath = getQueryVariable("url");
+			var videoPath = decodeURIComponent(getQueryVariable("url"));
 			console.log('播放地址：' + videoPath);
 			var player = document.getElementById('player01');
 			player.setAttribute("video-url", videoPath);

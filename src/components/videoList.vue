@@ -91,7 +91,7 @@
 				if (!this.showVideoDialog) { //防止出现流断开不彻底的问题
 					return '';
 				} else {
-					return '/video/video.html?url=' + this.videoUrl;
+					return '/video/video.html?url=' + encodeURIComponent(this.videoUrl);
 				}
 			},
 			getPlayerShared: function() {
@@ -280,7 +280,7 @@
 				console.log("当前行：" + JSON.stringify(rowData));
 				this.$refs.videoRender.contentWindow.postMessage({
 					cmd: 'switchUrl',
-					params: isBackLive?{"path":this.videoUrl}:rowData
+					params: isBackLive?{"path":this.videoUrl,"live":isBackLive}:{"path":rowData.path,"live":isBackLive}
 				}, '*')
 			}
 		}
