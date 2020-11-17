@@ -128,7 +128,7 @@
 			},
 			showVideoInfo: function(videoData) {
 				let msg = '所属应用：' + videoData.app + ' 数据流类型：' + videoData.schema + ' 流名称：' + videoData.stream + ' 观看人数：' +
-					videoData.readerCount;
+					videoData.totoalReaderCount;
 				this.$alert(msg, '视频信息', {
 					confirmButtonText: '确定'
 				});
